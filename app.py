@@ -93,11 +93,9 @@ def login():
         validUser = checkUser(username, password)
         if validUser != None:
             # set JWT token
-
-            user_claims = {"role": validUser["roles"]}
+            user_claims = {"role": validUser["role"]}
             access_token = create_access_token(
                 username, user_claims=user_claims)
-
             response = make_response(
                 render_template(
                     "index.html", title="books", username=username, books=books
@@ -114,8 +112,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # remove the username from the session if it is there
-    session.pop("username", None)
+    # remove the JWT Token
     return "Logged Out of Books"
 
 
@@ -143,7 +140,7 @@ def addBook():
         # expects pure json with quotes everywheree
         author = request.form.get("author")
         title = request.form.get("title")
-        newbook = {"author": author, "title": title}
+        newbook = {"id": len(books)+1, "author": author, "title": title}
         books.append(newbook)
         return render_template(
             "books.html", books=books, username=username, title="books"
